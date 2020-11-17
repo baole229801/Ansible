@@ -1,0 +1,23 @@
+#This text here is plain text and not yaml
+
+---
+- name: Install Apache.
+  hosts: all 
+  
+  tasks:
+          - name: Install Apache.
+            command: yum install --quiet -y httpd httpd-devel
+            #shell: |
+            #        yum install -quiet -y httpd httpd-devel
+            #        cp httpd.conf /etc/httpd/conf/httpd.conf
+            #        cp httpd-vhosts.conf /etc/httpd/conf/httpd-vhosts.conf
+            #        systemctl enable httpd --now
+          
+          - name: Copy configuration files.
+            command: cp httpd.conf /etc/httpd/conf/httpd.conf
+          
+          - command: cp httpd-vhosts.conf /etc/httpd/conf/httpd-vhosts.conf
+          
+          - name: Start Apache and configure it to run at boot.
+            command: systemctl enable httpd --now
+

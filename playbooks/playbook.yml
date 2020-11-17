@@ -1,0 +1,32 @@
+---
+- name: Install Apache.
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install Apache.
+      yum:
+        name:
+          - httpd
+          - httpd-devel
+        state: present
+        #become: true # For a specific task to become root.
+
+    - name: Copy configuration files.
+      copy:
+        src: "{{ item.src }}" # Jinja expression
+        dest: "{{  item['dest'] }}" # for with_item to loop.
+        owner: root
+        group: root
+        mode: 0644
+      with_items:
+        - src: httpd.conf
+          dest: /etc/httpd/conf/httpd.conf
+        - src: httpd-vhosts.conf
+          dest: /etc/httpd/conf/httpd-vhosts.conf
+
+    - name: Ensure Apache is started and at boot.
+      service:
+        name: httpd
+        state: started
+        enabled: true # Or yes

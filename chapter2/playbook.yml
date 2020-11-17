@@ -1,0 +1,17 @@
+---
+- name: Setup NTP service on all servers.
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure NTP is installed.
+      yum: name=ntp state=present
+
+    #- name: Test idempotent.
+    #  command: yum install ntp -y
+    - shell: | 
+        if ! rpm -qa | grep -qw ntp; then
+          yum install ntp -y
+        fi
+
+    - name: Ensure NTP is running.
+      service: name=ntpd state=started enabled=yes
