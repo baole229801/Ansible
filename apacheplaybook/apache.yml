@@ -8,24 +8,11 @@
   #  http_proxy: http://example-proxy:80/
   #  https_proxy: https://example-proxy:443/
 
-  vars:
-    proxy_vars:
-      http_proxy: http://example-proxy:80/
-      https_proxy: https://example-proxy:443/
+  vars_files:
+    - vars/vars.yml
 
   pre_tasks:
-    - name: Update package manager if needed.
-      package:
-        update_cache: true
-        #cache_valid_time: 3600
-    
-    #- debug: var=ansible_os_family
-
-    - name: Load variable files.       
-      include_vars: "{{ item }}"
-      with_first_found:
-        - "vars/apache_{{ ansible_os_family }}.yml"
-        - "vars/apache_default.yml"
+    - import_tasks: tasks/pre_tasks.yml
   
   handlers:
     - import_tasks: handlers/apache_handlers.yml
