@@ -1,6 +1,6 @@
 ---
 - name: Install Apache.
-  hosts: centos
+  hosts: all
   #gather_facts: false
   become: true
 
@@ -19,5 +19,9 @@
 
   tasks:
     - import_tasks: tasks/apache_tasks.yml
+    #- include_tasks: tasks/dynamic_tasks.yml
   
-  
+    #- name: Clone website.
+    #  git: 
+
+- import_playbook: app.yml
