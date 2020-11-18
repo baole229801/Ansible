@@ -1,0 +1,11 @@
+--- 
+- name: restart apache
+  service:
+    name: "{{ apache_service }}"
+    state: restarted
+  #notify: restart memcache
+    
+- name: restart memcache
+  service: 
+    name: memcache
+    state: restarted
