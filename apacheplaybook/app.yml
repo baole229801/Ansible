@@ -1,0 +1,11 @@
+---
+- name: Install App.
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install 
+      command: date
+      register: result
+
+    - debug: var=result['stdout']
