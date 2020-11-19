@@ -1,0 +1,6 @@
+[node]
+192.168.55.55
+
+[node:vars]
+ansible_user=vagrant
+ansible_ssh_private_key_file=~/.ssh/id_rsa
