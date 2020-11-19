@@ -1,14 +1,17 @@
 ---
-- hosts: all
+- hosts: node
   become: yes
 
-  include_vars: vars/node_apps_vars.yml
+  vars_files: vars/node_apps_vars.yml
 
   pre_tasks:
     - include_tasks: tasks/pre_tasks.yml
 
-  tasks:
-    - include_tasks: tasks/install_node_tasks.yml
+  #tasks:
+  #  - include_tasks: tasks/install_node_tasks.yml
+
+  roles:
+    - setup_nodejs
 
     - name: Ensure Nodejs app folders exist.
       file:
