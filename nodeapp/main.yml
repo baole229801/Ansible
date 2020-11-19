@@ -1,0 +1,37 @@
+---
+- hosts: all
+  become: yes
+
+  include_vars: vars/node_apps_vars.yml
+
+  pre_tasks:
+    - include_tasks: tasks/pre_tasks.yml
+
+  tasks:
+    - include_tasks: tasks/install_node_tasks.yml
+
+    - name: Ensure Nodejs app folders exist.
+      file:
+        path: "{{ node_apps_location }}"
+        state: directory
+    
+    - name: Copy example Nodejs app to server.
+      copy:
+        src: app
+        dest: "{{ node_apps_location }}"
+
+    - name: Install app dependencies defined in package.json.
+      npm:
+        path: "{{ node_apps_location/app }}"
+
+    - name: Check list of running Nodejs apps.
+      command: forever list
+      register: forever_list
+      changed_when: false
+
+    - name: Start example Nodejs apps.
+      command: "forever start {{ node_apps_location }}/app/app.js"
+      when: "forever_list.stdout.find(node_apps_location + '/app/app.js') == -1"
+
+  
+       

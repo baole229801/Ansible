@@ -1,0 +1,5 @@
+---
+- name: Ensure package manager updated.
+  package:
+    update_cache: true
+    
