@@ -12,7 +12,8 @@
 
   roles:
     - setup_nodejs
-
+  
+  tasks:
     - name: Ensure Nodejs app folders exist.
       file:
         path: "{{ node_apps_location }}"
@@ -25,12 +26,15 @@
 
     - name: Install app dependencies defined in package.json.
       npm:
-        path: "{{ node_apps_location/app }}"
+        path: "{{ node_apps_location }}/app"
 
     - name: Check list of running Nodejs apps.
-      command: forever list
+      shell: forever list
       register: forever_list
       changed_when: false
+      ignore_errors: true
+    
+    - debug: var=forever_list
 
     - name: Start example Nodejs apps.
       command: "forever start {{ node_apps_location }}/app/app.js"

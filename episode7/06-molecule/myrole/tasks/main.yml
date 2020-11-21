@@ -1,0 +1,6 @@
+---
+# tasks file for myrole
+- name: Install Apache.
+  package:
+    name: httpd
+    state: present

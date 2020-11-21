@@ -1,0 +1,7 @@
+---
+roles:
+  - name: elliotweiser.command-line-tools
+    version: 2.3.0 
+  
+  - name: geerlingguy.homebrew
+    version: latest

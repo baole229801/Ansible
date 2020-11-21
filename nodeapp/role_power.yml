@@ -1,0 +1,12 @@
+- name: The power of Roles.
+  hosts: all
+
+  # To overrride default variables of roles, simply this.
+  vars:
+    firewall_log_dropped_packets: false
+
+  roles:
+    - geerlingguy.ntp
+    - geerlingguy.firewall
+    - geerlinggguy.java
+    - geerlinggguy.solr
