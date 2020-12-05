@@ -1,0 +1,23 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  set -e
+  yamllint .
+  ansible-lint
+platforms:
+  - name: instance
+    #image: geerlingguy/docker-centos8-ansible:latest
+    image: geerlingguy/docker-${MOLECULE_DISTRO:-centos8}-ansible:latest
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true # Do not set this parameter if not trus the container
+    pre_build_image: true
+provisioner:
+  name: ansible
+  log: true
+verifier:
+  name: ansible

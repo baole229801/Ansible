@@ -1,0 +1,10 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Verify Apache is serving web requests.
+      uri:
+        url: http://localhost/
+        status_code: 200
+        return_content: true
