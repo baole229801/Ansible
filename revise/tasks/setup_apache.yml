@@ -1,0 +1,32 @@
+---
+- name: Install Apache.
+  package:
+    name: 
+      - httpd 
+      - httpd-devel
+    state: present
+
+- name: Copy configuration files.
+  copy:
+    src: "{{ item['src'] }}"
+    dest: "{{ item['dest'] }}"
+    owner: root
+    group: root
+    mode: 0640
+  with_items:
+    - src: files/httpd.conf
+      dest: /etc/httpd/conf/httpd.conf
+    - src: files/httpd-vhosts.conf
+      dest: /etc/httpd/conf/httpd-vhosts.conf
+  notify: 
+    - restart apache
+    #- restart memcache
+
+- name: Make sure handlers are flushed immediately.
+  meta: flush_handlers
+  
+- name: Ensure Apache service is started and at boot.
+  service:
+    name: httpd
+    state: started
+    enabled: true

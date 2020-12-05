@@ -1,0 +1,13 @@
+- name: Setup for new server.
+  hosts: all
+  become: true
+
+  handlers:
+    - import_tasks: handlers/restart_apache.yml
+    - import_tasks: handlers/restart_memcache.yml
+
+  pre_tasks:
+    - import_tasks: tasks/pre_tasks.yml
+
+  tasks:
+    - import_tasks: tasks/setup_apache.yml
