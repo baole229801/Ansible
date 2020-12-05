@@ -4,3 +4,10 @@
   package:
     name: httpd
     state: present
+
+- fail:
+
+- name: Copy configuration file.
+  copy:
+    src: file.conf
+    dest: /etc/httpd/conf.d/welcome.conf
