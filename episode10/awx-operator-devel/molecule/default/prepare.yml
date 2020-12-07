@@ -1,0 +1,31 @@
+---
+- name: Prepare operator resources
+  hosts: localhost
+  connection: local
+
+  vars:
+    ansible_python_interpreter: '{{ ansible_playbook_python }}'
+    deploy_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/deploy"
+    templates_dir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/ansible/templates"
+  vars_files:
+    - "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}/ansible/group_vars/all"
+
+  tasks:
+    - name: Create Custom Resource Definition
+      k8s:
+        definition: "{{ lookup('file', '/'.join([deploy_dir, 'crds/awx_v1beta1_crd.yaml'])) }}"
+
+    - name: Ensure specified namespace is present
+      k8s:
+        api_version: v1
+        kind: Namespace
+        name: '{{ operator_namespace }}'
+
+    - name: Create RBAC resources
+      k8s:
+        definition: "{{ lookup('template', '/'.join([templates_dir, item])) }}"
+        namespace: '{{ operator_namespace }}'
+      with_items:
+        - role.yml.j2
+        - role_binding.yml.j2
+        - service_account.yml.j2
