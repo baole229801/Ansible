@@ -1,0 +1,102 @@
+---
+- hosts: all
+  become: true
+
+  vars_files:
+    - vars/ssh_vars.yml
+
+  handlers:
+    - name: restart ssh
+      service:
+        name: sshd
+        state: restarted
+
+  tasks:
+    - name: Tell SElinux about SSH's new port.
+      seport:
+        ports: "{{ ssh_port }}"
+        proto: tcp
+        setype: ssh_port_t
+        state: present
+
+    - name: Make sure SSH is more secure.
+      lineinfile:
+        dest: "{{ ssh_config_dir }}"
+        regexp: "{{ item.regexp }}"
+        line: "{{ item.line }}"
+        state: present
+        validate: 'sshd -T -f %s'
+      with_items:
+        - regexp: "^PasswordAuthentication"
+          line: "PasswordAuthentication no"
+        - regexp: "^PermitRootLogin"
+          line: "PermitRootLogin no"
+        - regexp: "^Port"
+          line: "Port {{ ssh_port }}"
+      notify: restart ssh
+  
+    - name: Add user baoletrg
+      user:
+        name: baoletrg
+
+    - name: Add sudo group rights for deployment user.
+      lineinfile:
+        dest: /etc/sudoers
+        regexp: '^baoletrg' # For idempotence
+        line: 'baoletrg ALL=(ALL) NOPASSWD: ALL'
+        state: present
+        validate: 'visudo -cf %s' 
+
+    - name: Remove unused packages.
+      package:
+        name:
+          - httpd
+          - nano 
+          - mailutils
+        state: absent
+
+    - name: Edit files permission.
+      file:
+        path: "{{ ssh_config_dir }}"
+        mode: 0600
+
+    - name: Make sure everything is updated.
+      yum:
+        name: '*'
+        state: latest
+      #apt:
+      #  upgrade: dist
+      #  update_cache: yes
+
+    - name: Update automatically with yum-cron.
+      yum:
+        name: yum-cron
+        state: present
+
+    - name: Ensure yum-cron is running and at boot.  
+      service:
+        name: yum-cron
+        state: started
+        enabled: true
+
+    - name: Install firewalld.
+      yum:
+        name: firewalld
+        state: present
+
+    - name: Ensure firewalld is running and start at boot.
+      service:
+        name: firewalld
+        state: started
+        enabled: true
+
+    - name: Configure ports in firewalld.
+      firewalld:
+        state: "{{ item.state }}"
+        port: "{{ item.port }}"
+        zone: public
+        immediate: true
+        permanent: true
+      with_items:
+        - { state: 'enabled', port: 2849/tcp }
+        - { state: 'enabled', port: 123/udp }    

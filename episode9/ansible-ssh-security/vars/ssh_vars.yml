@@ -1,0 +1,3 @@
+---
+ssh_port: 2849
+ssh_config_dir: /etc/ssh/sshd_config
