@@ -12,3 +12,5 @@ keyed_groups:
 
 hostnames:
   - network-interface.association.public-ip
+  #- private-ip-address
+  #- test --> Use this to check for available options.
